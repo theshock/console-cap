@@ -36,7 +36,6 @@
 	}
 
 	var methods = ['assert', 'count', 'debug', 'dir', 'dirxml', 'error', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd', 'trace', 'warn'];
-	var apply   = Function.prototype.apply;
 	
 	for (var i = methods.length; i--;) {
 		(function (methodName) {
@@ -45,7 +44,7 @@
 					/* we can change this with original[methodName].apply(original, arguments),
 					 * but IE8 & IE9 fails in that case
 					 */
-					apply.call(original[methodName], original, arguments);
+					Function.prototype.apply.call(original[methodName], original, arguments);
 				}
 			};
 		})(methods[i]);
