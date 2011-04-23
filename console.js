@@ -22,12 +22,12 @@
         
       if(!console.timeCounters) return false;
       
-      var key  = "KEY" + name.toString();
-      var timeCounter = console.timeCounters[key];
+      var key  = "KEY" + name.toString(),
+          timeCounter = console.timeCounters[key];
       
       if (timeCounter) {
-        var diff = time - timeCounter;
-        var label = name + ": " + diff + "ms";
+        var diff = time - timeCounter,
+            label = name + ": " + diff + "ms";
         console.info(label);
         delete console.timeCounters[key];
       }
