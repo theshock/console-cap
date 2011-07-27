@@ -3,7 +3,7 @@
 var global = this, apply = Function.prototype.apply, original = global.console, console;
 
 // firebug console has only getter, so we should delete it first
-delete global.console;
+if ('console' in global) delete global.console;
 
 console = global.console = { production: false };
 
