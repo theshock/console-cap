@@ -1,55 +1,67 @@
-(function () {
+(function (console) {
 
-var global = this, apply = Function.prototype.apply, original = global.console, console;
+	
+var log = console.log;
+	
+var i,
+	global  = this,
+	fnProto = Function.prototype,
+	fnApply = fnProto.apply,
+	fnBind  = fnProto.bind,
+	bind    = function (context, fn) {
+		return fnBind ?
+			fnBind.call( fn, context ) :
+			function () {
+				return fnApply.call( fn, context, arguments );
+			};
+	},
+	methods = ['assert','count','debug','dir','dirxml','error','group','groupCollapsed','groupEnd','info','log','markTimeline','profile','profileEnd','table','time','timeEnd','trace','warn'],
+	emptyFn = function(){},
+	empty   = {},
+	timeCounters;
 
-// firebug console has only getter, so we should delete it first
-if ('console' in global) delete global.console;
+for (i = methods.length; i--;) empty[methods[i]] = emptyFn;
 
-console = global.console = { production: false };
-
-if (original && !original.time) {
-	original.time = function(name, reset){
-		if (!name) return;
-		var time = new Date().getTime();
-		if (!console.timeCounters) console.timeCounters = {};
+if (console) {
+	
+	if (!console.time) {
+		console.timeCounters = timeCounters = {};
 		
-		var key = "KEY" + name.toString();
-		if(!reset && console.timeCounters[key]) return;
-		console.timeCounters[key] = time;
-	};
-
-	original.timeEnd = function(name){
-		var time = new Date().getTime();
-			
-		if(!console.timeCounters) return false;
-		
-		var key  = "KEY" + name.toString(),
-			timeCounter = console.timeCounters[key];
-		
-		if (timeCounter) {
-			var diff  = time - timeCounter,
-				label = name + ": " + diff + "ms";
-			console.info(label);
-			delete console.timeCounters[key];
-		}
-		return diff;
-	};
-}
-
-var methods = ['assert', 'count', 'debug', 'dir', 'dirxml', 'error', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd', 'trace', 'warn'];
-
-for (var i = methods.length; i--;) {
-	(function (methodName) {
-		console[methodName] = function () {
-			if (original && (methodName in original) && !console.production) {
-				/* we can change this with original[methodName].apply(original, arguments),
-				* but IE8 & IE9 fails in that case
-				*/
-				apply.call(original[methodName], original, arguments);
+		console.time = function(name, reset){
+			if (name) {
+				var time = +new Date, key = "KEY" + name.toString();
+				if (reset || !timeCounters[key]) timeCounters[key] = time;
 			}
 		};
-	})(methods[i]);
+
+		console.timeEnd = function(name){
+			var diff,
+				time = +new Date,
+				key = "KEY" + name.toString(),
+				timeCounter = timeCounters[key];
+			
+			if (timeCounter) {
+				diff  = time - timeCounter;
+				console.info( name + ": " + diff + "ms" );
+				delete timeCounters[key];
+			}
+			return diff;
+		};
+	}
+	
+	for (i = methods.length; i--;) {
+		console[methods[i]] = methods[i] in console ?
+			bind(console, console[methods[i]]) : emptyFn;
+	}
+	console.disable = function () { global.console = empty;   };
+	  empty.enable  = function () { global.console = console; };
+	
+	empty.disable = console.enable = emptyFn;
+	
+} else {
+	console = global.console = empty;
+	console.disable = console.enable = emptyFn;
 }
 
-})();
+})( typeof console === 'undefined' ? null : console );
 
