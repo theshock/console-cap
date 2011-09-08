@@ -1,8 +1,5 @@
 (function (console) {
 
-	
-var log = console.log;
-	
 var i,
 	global  = this,
 	fnProto = Function.prototype,

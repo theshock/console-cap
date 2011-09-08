@@ -7,11 +7,11 @@
 		<script>
 
 console.time( 'foo' );
-console.log( 'log' );
+console.log ( 'log' );
 console.timeEnd( 'foo' );
 
 console.disable();
-console.log( 'disabled' );
+console.log( 'disabled' ); // should not be logged
 
 console.enable();
 console.log( 'enabled' );
