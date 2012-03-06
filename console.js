@@ -12,7 +12,7 @@ var i,
 				return fnApply.call( fn, context, arguments );
 			};
 	},
-	methods = ['assert','count','debug','dir','dirxml','error','group','groupCollapsed','groupEnd','info','log','markTimeline','profile','profileEnd','table','time','timeEnd','trace','warn'],
+	methods = 'assert count debug dir dirxml error group groupCollapsed groupEnd info log markTimeline profile profileEnd table time timeEnd trace warn'.split(' '),
 	emptyFn = function(){},
 	empty   = {},
 	timeCounters;
