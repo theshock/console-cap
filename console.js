@@ -15,6 +15,14 @@ var i,
 	methods = 'assert count debug dir dirxml error group groupCollapsed groupEnd info log markTimeline profile profileEnd table time timeEnd trace warn'.split(' '),
 	emptyFn = function(){},
 	empty   = {},
+	logLevels = {
+		all: {},
+		debug: {log: emptyFn, info: emptyFn},
+		log: {debug: emptyFn, count: emptyFn},
+		info: {debug: emptyFn, count: emptyFn, log: emptyFn},
+		warn: {debug: emptyFn, count: emptyFn, log: emptyFn, info: emptyFn},
+		error: {debug: emptyFn, count: emptyFn, log: emptyFn, info: emptyFn, warn: emptyFn}
+	},
 	timeCounters;
 
 for (i = methods.length; i--;) empty[methods[i]] = emptyFn;
@@ -50,6 +58,17 @@ if (console) {
 		console[methods[i]] = methods[i] in console ?
 			bind(console, console[methods[i]]) : emptyFn;
 	}
+	console.logLevel = function(level) {
+		if (typeof logLevels[level] === 'undefined') {
+			level = 'all';
+		}
+		for (i = methods.length; i--;) {
+			var methodToBind = (typeof logLevels[level][methods[i]] === 'undefined') ?
+				console[methods[i]] : logLevels[level][methods[i]];
+			console[methods[i]] = methods[i] in console ?
+				bind(console, methodToBind) : emptyFn;
+		}
+	};
 	console.disable = function () { global.console = empty;   };
 	  empty.enable  = function () { global.console = console; };
 	
@@ -57,7 +76,7 @@ if (console) {
 	
 } else {
 	console = global.console = empty;
-	console.disable = console.enable = emptyFn;
+	console.disable = console.enable = console.logLevel = emptyFn;
 }
 
 })( typeof console === 'undefined' ? null : console );
