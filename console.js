@@ -76,7 +76,7 @@ if (console) {
 	
 } else {
 	console = global.console = empty;
-	console.disable = console.enable = emptyFn;
+	console.disable = console.enable = console.logLevel = emptyFn;
 }
 
 })( typeof console === 'undefined' ? null : console );
