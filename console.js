@@ -26,7 +26,7 @@ if (console) {
 		
 		console.time = function(name, reset){
 			if (name) {
-				var time = +new Date, key = "KEY" + name.toString();
+				var time = +new Date, key = "KEY";
 				if (reset || !timeCounters[key]) timeCounters[key] = time;
 			}
 		};
@@ -34,7 +34,7 @@ if (console) {
 		console.timeEnd = function(name){
 			var diff,
 				time = +new Date,
-				key = "KEY" + name.toString(),
+				key = "KEY" + name,
 				timeCounter = timeCounters[key];
 			
 			if (timeCounter) {
